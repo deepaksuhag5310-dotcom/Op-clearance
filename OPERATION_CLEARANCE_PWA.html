@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#c8a84b">
+<title>OP CLEARANCE — DSSC 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080e08;--bg2:#0f170f;--card:#121a12;--card2:#161e16;
+  --border:#1a281a;--border2:#243424;
+  --gold:#c8a84b;--gold2:rgba(200,168,75,0.12);--gold3:rgba(200,168,75,0.05);
+  --green:#4caf50;--red:#e05252;--purple:#9b59b6;--orange:#e67e22;--blue:#5b9bd5;
+  --text:#d4c9a8;--muted:#5a6b5a;--white:#f0ead6;
+  --nav:60px;--hud:54px;
+  --taca:#e05252;--tacb:#4caf50;--al:#c8a84b;--ca:#5b9bd5;--smt:#9b59b6;--mh:#e67e22;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
+button{font-family:'Barlow',sans-serif;cursor:pointer;}
+input,textarea,select{font-family:'Barlow',sans-serif;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+
+/* TOP HUD */
+#topHud{
+  position:fixed;top:0;left:0;right:0;height:var(--hud);
+  background:linear-gradient(180deg,#0a100a,rgba(8,14,8,0.95));
+  border-bottom:1px solid var(--border2);z-index:50;
+  display:flex;align-items:center;padding:0 14px;gap:8px;
+  backdrop-filter:blur(8px);
+}
+.hud-days{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+  color:var(--gold);line-height:1.2;
+}
+.hud-days span{display:block;font-size:16px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;}
+.hud-sep{width:1px;height:32px;background:var(--border2);}
+.hud-block{flex:1;text-align:center;}
+.hud-block-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;}
+.hud-block-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--white);}
+.hud-right{text-align:right;}
+.hud-streak{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px;line-height:1.2;}
+.hud-streak span{display:block;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;}
+
+/* MAIN CONTENT */
+#main{
+  position:fixed;top:var(--hud);left:0;right:0;
+  bottom:var(--nav);overflow:hidden;
+}
+.screen{display:none;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+.screen.active{display:block;}
+.screen-inner{padding:14px 14px calc(14px + env(safe-area-inset-bottom));min-height:100%;}
+
+/* BOTTOM NAV */
+#bottomNav{
+  position:fixed;bottom:0;left:0;right:0;height:var(--nav);
+  background:var(--bg2);border-top:1px solid var(--border2);
+  display:flex;z-index:50;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;background:transparent;border:none;color:var(--muted);
+  font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;
+  transition:color 0.2s;padding:6px 2px;
+}
+.nav-btn.active{color:var(--gold);}
+.nav-btn .ni{font-size:18px;line-height:1;}
+.nav-btn.active .ni{filter:drop-shadow(0 0 4px var(--gold));}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);margin-bottom:10px;overflow:hidden;}
+.card-hd{padding:10px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);
+  font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;}
+.card-bd{padding:12px 14px;}
+
+/* SECTION TITLES */
+.sec{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;color:var(--gold);
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+/* ═══ HOME SCREEN ═══ */
+.banner{
+  background:linear-gradient(135deg,rgba(200,168,75,0.1),rgba(200,168,75,0.03));
+  border:1px solid rgba(200,168,75,0.3);border-left:4px solid var(--gold);
+  padding:14px;margin-bottom:10px;
+}
+.banner-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;color:var(--gold);}
+.banner-call{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;margin-top:2px;}
+.banner-quote{font-style:italic;font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;opacity:0.8;}
+
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.stat-card{background:var(--card);border:1px solid var(--border);padding:10px;text-align:center;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1;}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+
+.sched-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.sched-item:last-child{border-bottom:none;}
+.sched-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sched-time{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);min-width:80px;}
+.sched-subj{font-size:13px;font-weight:600;flex:1;}
+.sched-done{font-size:14px;}
+
+.od-btn{
+  width:100%;padding:12px;background:rgba(0,120,212,0.15);border:1px solid rgba(0,120,212,0.4);
+  color:#5ba3d9;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;
+}
+.od-btn.connected{background:rgba(76,175,80,0.15);border-color:rgba(76,175,80,0.4);color:var(--green);}
+
+/* ═══ BLOCKS SCREEN ═══ */
+#blocksScreen{touch-action:pan-y;}
+.block-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.block-nav-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);
+  font-size:18px;padding:6px 14px;transition:all 0.15s;}
+.block-nav-btn:hover{border-color:var(--gold);color:var(--gold);}
+.block-counter{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;}
+.block-dots{display:flex;gap:5px;justify-content:center;margin-bottom:12px;}
+.bdot{width:24px;height:3px;background:var(--border2);transition:all 0.3s;}
+.bdot.active{background:var(--gold);}
+
+.block-card{
+  background:var(--card);border:1px solid var(--border);padding:16px;
+  text-align:center;margin-bottom:12px;
+}
+.block-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;margin-bottom:4px;}
+.block-time-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;}
+.block-subj-select{
+  width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border2);color:var(--white);
+  font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;padding:8px 12px;
+  margin-bottom:14px;outline:none;
+}
+.block-subj-select option{background:#131a13;}
+
+/* TIMER RING */
+.timer-wrap{position:relative;width:200px;height:200px;margin:0 auto 16px;}
+.timer-ring{width:200px;height:200px;transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--border2);stroke-width:8;}
+.ring-prog{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:502.65;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+.timer-display{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.timer-time{font-family:'Share Tech Mono',monospace;font-size:28px;color:var(--white);letter-spacing:2px;line-height:1;}
+.timer-pct{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+
+.energy-row{display:flex;justify-content:center;gap:8px;margin-bottom:14px;}
+.e-star{font-size:24px;cursor:pointer;opacity:0.3;transition:opacity 0.15s;}
+.e-star.active{opacity:1;}
+
+.block-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.bbtn{padding:13px;border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;transition:all 0.2s;}
+.bbtn-start{background:var(--gold);color:#080e08;}
+.bbtn-start:active{background:#d4b655;}
+.bbtn-war{background:rgba(224,82,82,0.2);border:1px solid var(--red);color:var(--red);}
+.bbtn-complete{width:100%;padding:13px;background:rgba(76,175,80,0.2);border:1px solid var(--green);
+  color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;}
+
+/* ═══ LOG SCREEN ═══ */
+.log-date{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);
+  text-align:center;margin-bottom:12px;}
+
+.hours-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.h-opt{flex:1;min-width:50px;padding:8px 4px;text-align:center;background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;
+  font-size:10px;cursor:pointer;transition:all 0.15s;}
+.h-opt.sel{border-color:var(--gold);color:var(--gold);background:var(--gold2);}
+
+.rating-row{display:flex;gap:6px;margin-bottom:12px;}
+.r-opt{flex:1;padding:9px 4px;text-align:center;background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:11px;
+  cursor:pointer;transition:all 0.15s;color:var(--muted);}
+.r-opt.sel.r1{border-color:var(--red);color:var(--red);background:rgba(224,82,82,0.15);}
+.r-opt.sel.r2{border-color:var(--orange);color:var(--orange);background:rgba(230,126,34,0.12);}
+.r-opt.sel.r3{border-color:var(--gold);color:var(--gold);background:var(--gold2);}
+.r-opt.sel.r4{border-color:var(--green);color:var(--green);background:rgba(76,175,80,0.12);}
+.r-opt.sel.r5{border-color:var(--blue);color:var(--blue);background:rgba(91,155,213,0.12);}
+
+.field-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);
+  margin-bottom:5px;display:block;}
+.points-list{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.point-input{display:flex;align-items:center;gap:6px;}
+.point-num{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);width:16px;}
+.point-text{flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--white);
+  padding:7px 10px;font-size:13px;outline:none;transition:border-color 0.2s;}
+.point-text:focus{border-color:var(--gold);}
+
+.score-sliders{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.score-row{display:flex;align-items:center;gap:8px;}
+.score-label{font-family:'Share Tech Mono',monospace;font-size:10px;width:44px;flex-shrink:0;}
+.score-slider{flex:1;accent-color:var(--gold);height:4px;}
+.score-val{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--gold);width:28px;text-align:right;}
+
+.log-textarea{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--white);
+  padding:10px;font-size:13px;resize:none;outline:none;min-height:70px;margin-bottom:12px;transition:border-color 0.2s;}
+.log-textarea:focus{border-color:var(--gold);}
+
+.media-row{display:flex;gap:8px;margin-bottom:12px;}
+.media-btn{flex:1;padding:11px;background:rgba(0,0,0,0.3);border:1px solid var(--border);
+  color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+  display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all 0.15s;}
+.media-btn:hover,.media-btn.active{border-color:var(--gold);color:var(--gold);}
+.voice-status{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);
+  text-align:center;margin-bottom:8px;display:none;}
+.voice-status.on{display:block;}
+.audio-preview{width:100%;margin-bottom:10px;display:none;}
+.audio-preview.show{display:block;}
+
+.save-btn-lg{
+  width:100%;padding:15px;background:var(--gold);color:#080e08;
+  font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;border:none;
+  transition:all 0.2s;
+}
+.save-btn-lg:active{background:#d4b655;}
+
+/* ═══ ARCHIVE SCREEN ═══ */
+.arch-tabs{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);}
+.arch-tab{flex:1;padding:9px;text-align:center;background:transparent;border:none;
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--muted);
+  cursor:pointer;border-right:1px solid var(--border);transition:all 0.2s;}
+.arch-tab:last-child{border-right:none;}
+.arch-tab.active{background:var(--gold2);color:var(--gold);}
+
+.log-entry-card{background:var(--card);border:1px solid var(--border);margin-bottom:8px;overflow:hidden;}
+.lec-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;
+  background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);cursor:pointer;}
+.lec-date{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--gold);}
+.lec-meta{display:flex;gap:5px;align-items:center;}
+.lec-badge{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;border:1px solid;}
+.lec-body{display:none;padding:10px 12px;}
+.lec-body.open{display:block;}
+.lec-field{margin-bottom:8px;}
+.lec-field label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:3px;}
+.lec-field p{font-size:12px;color:var(--text);line-height:1.5;}
+
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:10px;}
+.photo-thumb{aspect-ratio:1;background:var(--card);border:1px solid var(--border);
+  overflow:hidden;cursor:pointer;position:relative;}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;}
+.photo-tag{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);
+  font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--gold);padding:2px 4px;
+  letter-spacing:1px;text-align:center;}
+
+/* STUDY MATERIALS */
+.file-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);
+  border:1px solid var(--border);margin-bottom:5px;cursor:pointer;}
+.file-icon{font-size:22px;flex-shrink:0;}
+.file-info{flex:1;min-width:0;}
+.file-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+.file-tag{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border2);color:var(--muted);}
+.od-empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.od-empty div:first-child{font-size:36px;margin-bottom:8px;}
+.od-empty div:last-child{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;}
+
+/* ═══ MOTIVATION SCREEN ═══ */
+.motive-banner{
+  background:linear-gradient(135deg,rgba(200,168,75,0.12),rgba(200,168,75,0.03));
+  border:1px solid rgba(200,168,75,0.3);padding:18px;margin-bottom:10px;text-align:center;
+}
+.motive-callsign{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:6px;color:var(--gold);}
+.motive-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:3px;margin-top:4px;}
+.motive-quote{font-style:italic;font-size:13px;line-height:1.6;margin-top:12px;color:var(--white);}
+
+.why-card{background:var(--card);border:1px solid var(--border);border-left-width:4px;padding:14px;margin-bottom:8px;}
+.why-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;margin-bottom:6px;}
+.why-text{font-size:13px;line-height:1.6;color:var(--text);}
+
+.quote-card{background:linear-gradient(135deg,rgba(200,168,75,0.08),transparent);
+  border:1px solid var(--border);padding:16px;margin-bottom:8px;text-align:center;}
+.quote-text{font-style:italic;font-size:14px;line-height:1.7;color:var(--white);}
+.quote-author{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);
+  letter-spacing:2px;margin-top:8px;}
+
+/* ═══ WAR MODE OVERLAY ═══ */
+#warMode{
+  display:none;position:fixed;inset:0;background:#050a05;z-index:200;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+#warMode.open{display:flex;}
+#warClose{position:absolute;top:16px;right:16px;background:rgba(224,82,82,0.2);border:1px solid var(--red);
+  color:var(--red);font-size:16px;padding:8px 14px;cursor:pointer;}
+.war-subject{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:6px;color:var(--gold);
+  margin-bottom:8px;text-align:center;}
+.war-timeblock{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);
+  letter-spacing:3px;margin-bottom:30px;text-align:center;}
+.war-timer-wrap{position:relative;width:240px;height:240px;margin-bottom:30px;}
+.war-ring{width:240px;height:240px;transform:rotate(-90deg);}
+.war-ring .ring-bg{stroke-width:6;}
+.war-ring .ring-prog{stroke-dasharray:702.65;stroke-dashoffset:0;stroke-width:6;}
+.war-time-display{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;
+}
+.war-time{font-family:'Share Tech Mono',monospace;font-size:38px;color:var(--white);letter-spacing:2px;}
+.war-pct{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;}
+.war-btns{display:flex;gap:12px;}
+.wbtn{padding:14px 28px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;border:none;}
+.wbtn-pause{background:rgba(200,168,75,0.2);border:1px solid var(--gold) !important;color:var(--gold);border:none;}
+.wbtn-end{background:rgba(76,175,80,0.2);border:1px solid var(--green) !important;color:var(--green);border:none;}
+
+/* ═══ FAB ═══ */
+#fab{
+  position:fixed;right:18px;bottom:calc(var(--nav) + 16px);
+  width:52px;height:52px;border-radius:50%;background:var(--gold);color:#080e08;
+  border:none;font-size:24px;font-weight:300;z-index:60;
+  box-shadow:0 4px 20px rgba(200,168,75,0.4);transition:all 0.25s;
+}
+#fab.open{transform:rotate(45deg);}
+#fabMenu{
+  position:fixed;right:18px;bottom:calc(var(--nav) + 78px);
+  display:flex;flex-direction:column;gap:8px;z-index:59;
+  opacity:0;pointer-events:none;transform:translateY(10px);transition:all 0.25s;
+}
+#fabMenu.open{opacity:1;pointer-events:auto;transform:translateY(0);}
+.fab-item{
+  display:flex;align-items:center;gap:8px;background:var(--card2);
+  border:1px solid var(--border2);padding:9px 14px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+  color:var(--text);cursor:pointer;white-space:nowrap;transition:all 0.15s;
+}
+.fab-item:hover{border-color:var(--gold);color:var(--gold);}
+.fab-item .fi{font-size:16px;}
+
+/* ═══ ONEDRIVE PANEL ═══ */
+#odPanel{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:150;
+  align-items:flex-end;
+}
+#odPanel.open{display:flex;}
+.od-sheet{
+  width:100%;max-height:85vh;background:var(--bg2);border-top:2px solid rgba(0,120,212,0.5);
+  padding:20px;overflow-y:auto;
+}
+.od-sheet h3{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:#5ba3d9;margin-bottom:14px;}
+.od-status{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:8px 12px;
+  border:1px solid;margin-bottom:12px;text-align:center;}
+.od-status.disc{border-color:var(--border);color:var(--muted);}
+.od-status.ok{border-color:rgba(76,175,80,0.5);color:var(--green);background:rgba(76,175,80,0.08);}
+.od-status.err{border-color:rgba(224,82,82,0.5);color:var(--red);}
+.od-config{margin-bottom:12px;}
+.od-config label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:4px;}
+.od-config input{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);color:var(--white);
+  padding:8px 10px;font-size:12px;outline:none;}
+.od-config input:focus{border-color:#5ba3d9;}
+.od-btn-lg{width:100%;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;
+  margin-bottom:8px;border:none;cursor:pointer;transition:all 0.2s;}
+.od-login-btn{background:rgba(0,120,212,0.25);border:1px solid rgba(0,120,212,0.5) !important;color:#5ba3d9;border:none;}
+.od-sync-btn{background:rgba(76,175,80,0.15);border:1px solid rgba(76,175,80,0.4) !important;color:var(--green);border:none;}
+.od-close{width:100%;padding:10px;background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;}
+
+/* ═══ IMAGE VIEWER ═══ */
+#imgViewer{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:180;
+  flex-direction:column;align-items:center;justify-content:center;
+}
+#imgViewer.open{display:flex;}
+#viewerImg{max-width:100%;max-height:calc(100vh - 100px);object-fit:contain;}
+#viewerClose{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);border:1px solid var(--border);
+  color:var(--white);font-size:18px;padding:8px 14px;cursor:pointer;}
+#viewerTag{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);
+  background:rgba(0,0,0,0.7);padding:4px 12px;letter-spacing:2px;}
+
+/* ═══ PHOTO UPLOAD MODAL ═══ */
+#uploadModal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:160;
+  align-items:flex-end;
+}
+#uploadModal.open{display:flex;}
+.upload-sheet{width:100%;background:var(--bg2);border-top:2px solid var(--gold);padding:20px;}
+.upload-sheet h3{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;}
+.upload-select{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--white);
+  padding:9px 10px;font-size:13px;margin-bottom:10px;outline:none;}
+.upload-select option{background:#131a13;}
+.upload-preview{width:100%;max-height:160px;object-fit:contain;display:none;margin-bottom:10px;}
+.upload-preview.show{display:block;}
+.upload-btns{display:flex;gap:8px;}
+.ubtn{flex:1;padding:11px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+  border:none;cursor:pointer;transition:all 0.2s;}
+.ubtn-cam{background:rgba(200,168,75,0.2);border:1px solid var(--gold) !important;color:var(--gold);border:none;}
+.ubtn-file{background:rgba(91,155,213,0.15);border:1px solid var(--blue) !important;color:var(--blue);border:none;}
+.ubtn-save{background:var(--gold);color:#080e08;}
+.ubtn-cancel{background:transparent;border:1px solid var(--border) !important;color:var(--muted);border:none;}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:calc(var(--nav) + 16px);left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--gold);color:#080e08;font-family:'Bebas Neue',sans-serif;
+  font-size:14px;letter-spacing:3px;padding:9px 20px;z-index:300;
+  opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+.pulsing{animation:pulse 1s infinite;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.fade-in{animation:fadeIn 0.3s ease;}
+
+/* UTILS */
+.divider{height:1px;background:var(--border);margin:12px 0;}
+.flex-between{display:flex;align-items:center;justify-content:space-between;}
+.mono{font-family:'Share Tech Mono',monospace;}
+.gold{color:var(--gold);}
+.muted{color:var(--muted);}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- TOP HUD -->
+<div id="topHud">
+  <div class="hud-days">
+    <span id="hudDays">—</span>
+    DAYS LEFT
+  </div>
+  <div class="hud-sep"></div>
+  <div class="hud-block">
+    <div class="hud-block-label">CURRENT BLOCK</div>
+    <div class="hud-block-name" id="hudBlockName">TAP BLOCKS</div>
+  </div>
+  <div class="hud-sep"></div>
+  <div class="hud-right">
+    <div class="hud-streak">
+      <span id="hudStreak">0</span>
+      🔥 STREAK
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HOME -->
+  <div id="s-home" class="screen active">
+    <div class="screen-inner">
+      <div class="banner">
+        <div class="banner-name">MAJ DEEPAK SUHAG</div>
+        <div class="banner-call">CALLSIGN: SUHAG ◈ DSSC 2026</div>
+        <div class="banner-quote" id="rotatingQuote">"Deepak Suhag does not negotiate with excuses."</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val" id="todayHours">0</div>
+          <div class="stat-lbl">TODAY<br>HRS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="weekHours">0</div>
+          <div class="stat-lbl">WEEK<br>HRS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="weakSubj" style="font-size:16px">—</div>
+          <div class="stat-lbl">WEAK<br>SUBJ</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd" style="color:var(--gold)">⌚ TODAY'S SCHEDULE</div>
+        <div class="card-bd" id="schedList"></div>
+      </div>
+
+      <button class="od-btn" id="odHomeBtn" onclick="openOD()">
+        <span>☁</span> <span id="odHomeBtnText">CONNECT ONEDRIVE</span>
+      </button>
+
+      <div class="card">
+        <div class="card-hd" style="color:var(--blue)">📁 STUDY MATERIALS</div>
+        <div class="card-bd" id="homeStudyFiles">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-align:center;padding:8px 0;">Connect OneDrive to access files</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCKS -->
+  <div id="s-blocks" class="screen">
+    <div class="screen-inner" id="blocksScreen">
+      <div class="block-nav">
+        <button class="block-nav-btn" onclick="prevBlock()">◀</button>
+        <div class="block-counter mono muted" id="blockCounter">BLOCK 1 OF 5</div>
+        <button class="block-nav-btn" onclick="nextBlock()">▶</button>
+      </div>
+      <div class="block-dots" id="blockDots"></div>
+
+      <div class="block-card">
+        <div class="block-title" id="blockTitle" style="color:var(--taca)">BLOCK 1</div>
+        <div class="block-time-label" id="blockTimeLabel">0530 — 0800</div>
+        <select class="block-subj-select" id="blockSubjSelect" onchange="changeBlockSubj(this.value)">
+          <option value="TAC A">TAC A — TACTICS</option>
+          <option value="TAC B">TAC B — TACTICS B</option>
+          <option value="A & L">A&L — ADMIN & LOGISTICS</option>
+          <option value="SMT">SMT — SCI & MIL TECH</option>
+          <option value="MH">MH — MILITARY HISTORY</option>
+          <option value="CA">CA — CURRENT AFFAIRS</option>
+        </select>
+        <div class="timer-wrap">
+          <svg class="timer-ring" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" class="ring-bg"/>
+            <circle cx="100" cy="100" r="80" class="ring-prog" id="timerRing" stroke="var(--taca)"/>
+          </svg>
+          <div class="timer-display">
+            <div class="timer-time" id="timerDisplay">02:30:00</div>
+            <div class="timer-pct" id="timerPct">100%</div>
+          </div>
+        </div>
+        <div class="energy-row" id="energyRow">
+          <span class="e-star active" onclick="setEnergy(1)">★</span>
+          <span class="e-star" onclick="setEnergy(2)">★</span>
+          <span class="e-star" onclick="setEnergy(3)">★</span>
+          <span class="e-star" onclick="setEnergy(4)">★</span>
+          <span class="e-star" onclick="setEnergy(5)">★</span>
+        </div>
+        <div class="block-btns">
+          <button class="bbtn bbtn-start" id="startPauseBtn" onclick="toggleTimer()">▶ START</button>
+          <button class="bbtn bbtn-war" onclick="enterWarMode()">⚔ WAR MODE</button>
+        </div>
+        <button class="bbtn-complete" id="completeBtn" onclick="completeBlock()">✓ MARK COMPLETE</button>
+      </div>
+
+      <div class="card" id="completedBlocksCard">
+        <div class="card-hd" style="color:var(--green)">✓ COMPLETED TODAY</div>
+        <div class="card-bd" id="completedList">
+          <div class="mono muted" style="font-size:10px;text-align:center;padding:6px 0">None yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div id="s-log" class="screen">
+    <div class="screen-inner">
+      <div class="sec">📝 DAILY BATTLE LOG</div>
+      <div class="log-date" id="logDateDisplay">—</div>
+
+      <div class="card">
+        <div class="card-hd">STUDY HOURS</div>
+        <div class="card-bd">
+          <div class="hours-row">
+            <div class="h-opt" onclick="selHours(this,'<8')">&lt;8</div>
+            <div class="h-opt" onclick="selHours(this,'8-10')">8–10</div>
+            <div class="h-opt" onclick="selHours(this,'10-12')">10–12</div>
+            <div class="h-opt" onclick="selHours(this,'12-14')">12–14</div>
+            <div class="h-opt" onclick="selHours(this,'15+')">15+★</div>
+          </div>
+          <span class="field-label">DAY RATING</span>
+          <div class="rating-row">
+            <div class="r-opt r1" onclick="selRating(this,1)">1💀</div>
+            <div class="r-opt r2" onclick="selRating(this,2)">2😐</div>
+            <div class="r-opt r3" onclick="selRating(this,3)">3✅</div>
+            <div class="r-opt r4" onclick="selRating(this,4)">4🔥</div>
+            <div class="r-opt r5" onclick="selRating(this,5)">5⚡</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">📌 5 KEY POINTS</div>
+        <div class="card-bd">
+          <div class="points-list" id="pointsList">
+            <div class="point-input"><span class="point-num">1.</span><input class="point-text" type="text" placeholder="Key point from today..." id="pt1"></div>
+            <div class="point-input"><span class="point-num">2.</span><input class="point-text" type="text" placeholder="Key point from today..." id="pt2"></div>
+            <div class="point-input"><span class="point-num">3.</span><input class="point-text" type="text" placeholder="Key point from today..." id="pt3"></div>
+            <div class="point-input"><span class="point-num">4.</span><input class="point-text" type="text" placeholder="Key point from today..." id="pt4"></div>
+            <div class="point-input"><span class="point-num">5.</span><input class="point-text" type="text" placeholder="Key point from today..." id="pt5"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">📊 SUBJECT SCORES (/10)</div>
+        <div class="card-bd">
+          <div class="score-sliders">
+            <div class="score-row"><span class="score-label" style="color:var(--taca)">TAC A</span><input class="score-slider" type="range" min="0" max="10" value="5" id="sc_taca" oninput="updScore(this,'sv_taca')"><span class="score-val" id="sv_taca">5</span></div>
+            <div class="score-row"><span class="score-label" style="color:var(--al)">A&L</span><input class="score-slider" type="range" min="0" max="10" value="5" id="sc_al" oninput="updScore(this,'sv_al')"><span class="score-val" id="sv_al">5</span></div>
+            <div class="score-row"><span class="score-label" style="color:var(--smt)">SMT</span><input class="score-slider" type="range" min="0" max="10" value="5" id="sc_smt" oninput="updScore(this,'sv_smt')"><span class="score-val" id="sv_smt">5</span></div>
+            <div class="score-row"><span class="score-label" style="color:var(--mh)">MH</span><input class="score-slider" type="range" min="0" max="10" value="5" id="sc_mh" oninput="updScore(this,'sv_mh')"><span class="score-val" id="sv_mh">5</span></div>
+            <div class="score-row"><span class="score-label" style="color:var(--ca)">CA</span><input class="score-slider" type="range" min="0" max="10" value="5" id="sc_ca" oninput="updScore(this,'sv_ca')"><span class="score-val" id="sv_ca">5</span></div>
+            <div class="score-row"><span class="score-label" style="color:var(--tacb)">TAC B</span><input class="score-slider" type="range" min="0" max="10" value="5" id="sc_tacb" oninput="updScore(this,'sv_tacb')"><span class="score-val" id="sv_tacb">5</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">⚠ MISTAKES / DIFFICULT</div>
+        <div class="card-bd">
+          <textarea class="log-textarea" id="log_mistakes" placeholder="What was hard. What to revisit tomorrow." rows="3"></textarea>
+          <span class="field-label">TOMORROW'S PRIORITY</span>
+          <textarea class="log-textarea" id="log_tomorrow" placeholder="First task when I open the book tomorrow..." rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">🎙 MEDIA</div>
+        <div class="card-bd">
+          <div class="media-row">
+            <button class="media-btn" id="voiceBtn" onclick="toggleVoice()"><span>🎙</span> VOICE NOTE</button>
+            <button class="media-btn" onclick="openUpload()"><span>📸</span> PHOTO</button>
+          </div>
+          <div class="voice-status" id="voiceStatus">🔴 RECORDING...</div>
+          <audio class="audio-preview" id="audioPreview" controls></audio>
+        </div>
+      </div>
+
+      <button class="save-btn-lg" onclick="saveLog()">⊕ SAVE TODAY'S ENTRY</button>
+    </div>
+  </div>
+
+  <!-- ARCHIVE -->
+  <div id="s-archive" class="screen">
+    <div class="screen-inner">
+      <div class="sec">📁 ARCHIVE</div>
+      <div class="arch-tabs">
+        <button class="arch-tab active" onclick="archTab('logs',this)">LOGS</button>
+        <button class="arch-tab" onclick="archTab('photos',this)">ANSWERS</button>
+        <button class="arch-tab" onclick="archTab('files',this)">STUDY FILES</button>
+      </div>
+
+      <div id="archLogs">
+        <div id="logsList"></div>
+      </div>
+      <div id="archPhotos" style="display:none">
+        <div class="photo-grid" id="photoGrid"></div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:8px;" id="photoEmpty">No answer sheets yet</div>
+      </div>
+      <div id="archFiles" style="display:none">
+        <div id="filesList">
+          <div class="od-empty"><div>☁</div><div>CONNECT ONEDRIVE TO VIEW FILES</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOTIVATION -->
+  <div id="s-motive" class="screen">
+    <div class="screen-inner">
+      <div class="motive-banner">
+        <div class="motive-callsign">SUHAG</div>
+        <div class="motive-sub">◈ OPERATION CLEARANCE ◈ DSSC 2026 ◈</div>
+        <div class="motive-quote" id="motiveQuote">"Deepak Suhag does not negotiate with excuses."</div>
+      </div>
+
+      <div class="why-card" style="border-left-color:var(--gold)">
+        <div class="why-title" style="color:var(--gold)">⭐ WHY DSSC</div>
+        <div class="why-text">DSSC is not just a course — it is the gateway to command, higher planning, and leading India's finest. Every minute today is a brick in that future.</div>
+      </div>
+
+      <div class="why-card" style="border-left-color:var(--red)">
+        <div class="why-title" style="color:var(--red)">❤ PEPU — MY WIFE</div>
+        <div class="why-text">She believes in you without conditions. Every hour of study is a promise kept to her — a better life, better postings, better future together. She is your reason when discipline is not enough.</div>
+      </div>
+
+      <div class="why-card" style="border-left-color:var(--green)">
+        <div class="why-title" style="color:var(--green)">🌍 FUTURE LIFE</div>
+        <div class="why-text">DSSC opens the path — staff appointments abroad, better postings, opportunities beyond India's borders. The sacrifice of 163 days buys decades of quality. Do the math.</div>
+      </div>
+
+      <div class="why-card" style="border-left-color:var(--blue)">
+        <div class="why-title" style="color:var(--blue)">🎖 THE REGIMENT WATCHES</div>
+        <div class="why-text">Your unit, your seniors, your men — they all have their eyes on you. Come Sep 1, stand at that exam desk knowing that every block was completed. Every review was written. No compromise.</div>
+      </div>
+
+      <div class="sec" style="margin-top:16px">⚡ QUOTES FOR BATTLE</div>
+      <div id="quotesContainer"></div>
+
+      <div class="card" style="margin-top:10px">
+        <div class="card-hd" style="color:var(--gold)">📊 PERFORMANCE SNAPSHOT</div>
+        <div class="card-bd">
+          <div class="score-sliders" id="snapScores">
+            <div class="mono muted" style="font-size:10px;text-align:center;padding:6px 0">Save a log entry to see your scores</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav id="bottomNav">
+  <button class="nav-btn active" id="nav-home" onclick="nav('home',this)">
+    <span class="ni">🏠</span>HOME
+  </button>
+  <button class="nav-btn" id="nav-blocks" onclick="nav('blocks',this)">
+    <span class="ni">⚔</span>BLOCKS
+  </button>
+  <button class="nav-btn" id="nav-log" onclick="nav('log',this)">
+    <span class="ni">📝</span>LOG
+  </button>
+  <button class="nav-btn" id="nav-archive" onclick="nav('archive',this)">
+    <span class="ni">📁</span>ARCHIVE
+  </button>
+  <button class="nav-btn" id="nav-motive" onclick="nav('motive',this)">
+    <span class="ni">⚡</span>MISSION
+  </button>
+</nav>
+
+<!-- FAB -->
+<button id="fab" onclick="toggleFab()">+</button>
+<div id="fabMenu">
+  <div class="fab-item" onclick="fabGo('log')"><span class="fi">📝</span> ADD LOG</div>
+  <div class="fab-item" onclick="openUpload()"><span class="fi">📸</span> UPLOAD ANSWER</div>
+  <div class="fab-item" onclick="fabGo('blocks')"><span class="fi">⏱</span> START TIMER</div>
+</div>
+
+<!-- WAR MODE -->
+<div id="warMode">
+  <button id="warClose" onclick="exitWarMode()">✕ EXIT</button>
+  <div class="war-subject" id="warSubject">TAC A</div>
+  <div class="war-timeblock mono muted" id="warTimeblock">0530 — 0800</div>
+  <div class="war-timer-wrap">
+    <svg class="war-ring" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" r="112" class="ring-bg"/>
+      <circle cx="120" cy="120" r="112" class="ring-prog" id="warRing" stroke="var(--taca)"/>
+    </svg>
+    <div class="war-time-display">
+      <div class="war-time" id="warTimerDisplay">02:30:00</div>
+      <div class="war-pct" id="warPct">100%</div>
+    </div>
+  </div>
+  <div class="war-btns">
+    <button class="wbtn wbtn-pause" id="warPauseBtn" onclick="toggleTimer()">⏸ PAUSE</button>
+    <button class="wbtn wbtn-end" onclick="completeBlock()">✓ COMPLETE</button>
+  </div>
+</div>
+
+<!-- ONEDRIVE PANEL -->
+<div id="odPanel" onclick="odPanelClick(event)">
+  <div class="od-sheet">
+    <h3>☁ ONEDRIVE INTEGRATION</h3>
+    <div class="od-status disc" id="odStatus">DISCONNECTED</div>
+    <div class="od-config" id="odConfigArea">
+      <label>AZURE APP CLIENT ID (register at portal.azure.com)</label>
+      <input type="text" id="odClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:5px;line-height:1.6;">
+        1. Go to portal.azure.com → App registrations<br>
+        2. New registration → Single page app → Redirect URI = this page URL<br>
+        3. API permissions → Microsoft Graph → Files.ReadWrite<br>
+        4. Copy Application (client) ID above
+      </div>
+    </div>
+    <button class="od-btn-lg od-login-btn" onclick="odLogin()">🔑 SIGN IN WITH MICROSOFT</button>
+    <button class="od-btn-lg od-sync-btn" id="odSyncBtn" onclick="odSync()" style="display:none">↑ SYNC DATA TO ONEDRIVE</button>
+    <button class="od-btn-lg od-sync-btn" id="odFilesBtn" onclick="odFetchFiles()" style="display:none">📂 LOAD STUDY FILES</button>
+    <button class="od-close" onclick="closeOD()">CLOSE</button>
+  </div>
+</div>
+
+<!-- IMAGE VIEWER -->
+<div id="imgViewer">
+  <button id="viewerClose" onclick="closeViewer()">✕</button>
+  <img id="viewerImg" src="" alt="">
+  <div id="viewerTag"></div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div id="uploadModal" onclick="uploadModalClick(event)">
+  <div class="upload-sheet">
+    <h3>📸 UPLOAD ANSWER SHEET</h3>
+    <select class="upload-select" id="uploadTag">
+      <option value="TAC A">TAC A — TACTICS</option>
+      <option value="TAC B">TAC B — TACTICS B</option>
+      <option value="A & L">A&L — ADMIN & LOGISTICS</option>
+      <option value="SMT">SMT — SCI & MIL TECH</option>
+      <option value="MH">MH — MILITARY HISTORY</option>
+      <option value="CA">CA — CURRENT AFFAIRS</option>
+    </select>
+    <img id="uploadPreview" class="upload-preview" alt="">
+    <input type="file" id="camInput" accept="image/*" capture="environment" style="display:none" onchange="photoSelected(this)">
+    <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="photoSelected(this)">
+    <div class="upload-btns">
+      <button class="ubtn ubtn-cam" onclick="document.getElementById('camInput').click()">📸 CAMERA</button>
+      <button class="ubtn ubtn-file" onclick="document.getElementById('fileInput').click()">📁 FILE</button>
+      <button class="ubtn ubtn-save" id="savePhotoBtn" onclick="savePhoto()" style="display:none">SAVE</button>
+      <button class="ubtn ubtn-cancel" onclick="closeUpload()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+// ═══ CONFIG ═══
+const EXAM_DATE = new Date('2026-09-01T09:00:00');
+const QUOTES = [
+  {text:'"An officer who reads wins. An officer who writes wins faster."',by:'Staff College Wisdom'},
+  {text:'"Discipline is choosing between what you want now and what you want most."',by:'Abraham Lincoln'},
+  {text:'"The more you sweat in peace, the less you bleed in war."',by:'Gen Norman Schwarzkopf'},
+  {text:'"A pint of sweat will save a gallon of blood."',by:'Gen George S. Patton'},
+  {text:'"In preparing for battle I have always found that plans are useless, but planning is indispensable."',by:'Gen Eisenhower'},
+  {text:'"What counts is not necessarily the size of the dog in the fight — it\'s the size of the fight in the dog."',by:'Gen Eisenhower'},
+  {text:'"Every morning in Africa, a gazelle wakes up. It knows it must run faster than the fastest lion. Every morning a lion wakes up. It knows it must outrun the slowest gazelle. It doesn\'t matter whether you\'re a lion or a gazelle — when the sun comes up, you\'d better be running."',by:'African Proverb'},
+  {text:'"DSSC is not a destination. It is the first rung of the next ladder."',by:'Senior Officer, DSSC'},
+];
+
+const BLOCKS = [
+  {id:0,label:'BLOCK 1',time:'0530–0800',subject:'TAC A',mins:150,color:'var(--taca)'},
+  {id:1,label:'BLOCK 2',time:'0830–1030',subject:'A & L',mins:120,color:'var(--al)'},
+  {id:2,label:'BLOCK 3',time:'1030–1230',subject:'SMT',mins:120,color:'var(--smt)'},
+  {id:3,label:'BLOCK 4',time:'1400–1630',subject:'TAC A',mins:150,color:'var(--taca)'},
+  {id:4,label:'BLOCK 5',time:'1700–1900',subject:'MH',mins:120,color:'var(--mh)'},
+];
+
+const SUBJ_COLORS = {'TAC A':'var(--taca)','TAC B':'var(--tacb)','A & L':'var(--al)','SMT':'var(--smt)','MH':'var(--mh)','CA':'var(--ca)'};
+
+// ═══ STORAGE ═══
+const ld = k => { try{return JSON.parse(localStorage.getItem(k));}catch{return null;} };
+const sv = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const pad = n => String(n).padStart(2,'0');
+const todayKey = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const fmtDate = k => { const [y,m,d]=k.split('-'),days=['SUN','MON','TUE','WED','THU','FRI','SAT'],mo=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'],dt=new Date(+y,+m-1,+d);return `${days[dt.getDay()]} ${d} ${mo[+m-1]} ${y}`; };
+
+// ═══ PWA ═══
+function setupPWA() {
+  const manifest = {name:'Operation Clearance DSSC 2026',short_name:'OP CLEARANCE',start_url:'.',display:'standalone',background_color:'#080e08',theme_color:'#c8a84b',orientation:'portrait',description:'DSSC 2026 Study Tracker — Maj Deepak Suhag',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23080e08"/><text y=".9em" font-size="90">⚔</text></svg>',sizes:'any',type:'image/svg+xml'}]};
+  const mBlob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  const mUrl = URL.createObjectURL(mBlob);
+  const mLink = document.createElement('link'); mLink.rel='manifest'; mLink.href=mUrl;
+  document.head.appendChild(mLink);
+  if('serviceWorker' in navigator) {
+    const sw = `
+const CACHE='oc-v2';
+const ASSETS=['/'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll([]))));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(res.ok){const c=res.clone();caches.open(CACHE).then(ca=>ca.put(e.request,c));}return res;}).catch(()=>r)));});`;
+    try {
+      const swBlob = new Blob([sw],{type:'application/javascript'});
+      const swUrl = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl,{scope:'./'}).catch(()=>{});
+    } catch(e){}
+  }
+}
+
+// ═══ HUD ═══
+function updateHUD() {
+  const now = new Date();
+  const diff = EXAM_DATE - now;
+  const days = Math.max(0, Math.ceil(diff / 86400000));
+  document.getElementById('hudDays').textContent = days;
+  const streak = calcStreak();
+  document.getElementById('hudStreak').textContent = streak;
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  const curBlock = getCurrentBlock(blocks);
+  document.getElementById('hudBlockName').textContent = curBlock ? curBlock.subject : 'OFF DUTY';
+}
+
+function getCurrentBlock(blocks) {
+  const now = new Date();
+  const nowMins = now.getHours()*60 + now.getMinutes();
+  return blocks.find(b => {
+    const [s,e] = b.time.split('–').map(t => { const h=parseInt(t.slice(0,2)),m=parseInt(t.slice(2)||0); return h*60+m; });
+    return nowMins >= s && nowMins <= e;
+  });
+}
+
+function calcStreak() {
+  const logs = ld('oc_logs') || [];
+  const dates = new Set(logs.map(l => l.date));
+  let streak = 0, d = new Date();
+  while(true) {
+    const k = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    if(dates.has(k)) { streak++; d.setDate(d.getDate()-1); } else break;
+  }
+  return streak;
+}
+
+// ═══ ROUTER ═══
+function nav(id, el) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  (el || document.getElementById('nav-'+id)).classList.add('active');
+  closeFab();
+  if(id==='home') updateHome();
+  if(id==='blocks') renderBlocksScreen();
+  if(id==='log') initLog();
+  if(id==='archive') renderArchive();
+  if(id==='motive') renderMotive();
+}
+
+// ═══ HOME ═══
+function updateHome() {
+  const logs = ld('oc_logs') || [];
+  const today = logs.find(l => l.date === todayKey());
+  const todayHrs = today ? (today.hrs || '0') : '0';
+  const hrsMap = {'<8':6,'8-10':9,'10-12':11,'12-14':13,'15+':15};
+  document.getElementById('todayHours').textContent = hrsMap[todayHrs] || todayHrs;
+
+  const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  let weekTotal = 0;
+  logs.forEach(l => {
+    const d = new Date(l.date);
+    if(d >= weekStart) weekTotal += (hrsMap[l.hrs] || 0);
+  });
+  document.getElementById('weekHours').textContent = weekTotal;
+
+  // Weak subject from latest log scores
+  const latest = logs[0];
+  if(latest && latest.scores) {
+    const sc = latest.scores;
+    const weakKey = Object.keys(sc).reduce((a,b) => sc[a] < sc[b] ? a : b);
+    const labelMap = {taca:'TAC A',al:'A&L',smt:'SMT',mh:'MH',ca:'CA',tacb:'TAC B'};
+    document.getElementById('weakSubj').textContent = labelMap[weakKey] || weakKey.toUpperCase();
+  }
+
+  // Schedule
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  const comp = ld('oc_completed_'+todayKey()) || {};
+  const sched = document.getElementById('schedList');
+  sched.innerHTML = blocks.map(b => `
+    <div class="sched-item">
+      <div class="sched-dot" style="background:${b.color||'var(--gold)'}"></div>
+      <div class="sched-time">${b.time}</div>
+      <div class="sched-subj" style="color:${b.color||'var(--text)'}">${b.subject}</div>
+      <div class="sched-done">${comp[b.id] ? '✅' : '○'}</div>
+    </div>`).join('');
+
+  // OneDrive button
+  const token = ld('oc_od_token');
+  const odBtn = document.getElementById('odHomeBtnText');
+  if(token) { odBtn.textContent = '✓ ONEDRIVE CONNECTED'; document.getElementById('odHomeBtn').classList.add('connected'); }
+  else { odBtn.textContent = 'CONNECT ONEDRIVE'; document.getElementById('odHomeBtn').classList.remove('connected'); }
+
+  // Study files preview
+  const files = ld('oc_od_files') || [];
+  const fList = document.getElementById('homeStudyFiles');
+  if(files.length) {
+    fList.innerHTML = files.slice(0,3).map(f => `
+      <div class="sched-item" onclick="openFile('${f.webUrl||''}')">
+        <span style="font-size:18px">${f.name?.endsWith('.pdf')?'📄':'📁'}</span>
+        <span style="font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</span>
+      </div>`).join('');
+  } else {
+    fList.innerHTML = '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--muted);text-align:center;padding:8px 0">Connect OneDrive to access files</div>';
+  }
+}
+
+// ═══ BLOCKS / TIMER ═══
+let curBlockIdx = 0;
+let timerInterval = null;
+let timerRunning = false;
+let timerRemaining = 0;
+let timerTotal = 0;
+let energyVal = 3;
+let touchStartX = 0;
+
+function renderBlocksScreen() {
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  const b = blocks[curBlockIdx];
+  renderBlock(b, blocks);
+  renderCompleted(blocks);
+}
+
+function renderBlock(b, blocks) {
+  const CIRC_SMALL = 502.65;
+  document.getElementById('blockTitle').textContent = b.label;
+  document.getElementById('blockTitle').style.color = b.color || 'var(--gold)';
+  document.getElementById('blockTimeLabel').textContent = b.time;
+  document.getElementById('blockSubjSelect').value = b.subject;
+  document.getElementById('blockCounter').textContent = `BLOCK ${curBlockIdx+1} OF ${blocks.length}`;
+  document.getElementById('timerRing').style.stroke = b.color || 'var(--gold)';
+  document.getElementById('warSubject').textContent = b.subject;
+  document.getElementById('warTimeblock').textContent = b.time;
+  document.getElementById('warRing').style.stroke = b.color || 'var(--gold)';
+  document.getElementById('hudBlockName').textContent = b.subject;
+
+  if(!timerRunning) {
+    timerTotal = b.mins * 60;
+    timerRemaining = timerTotal;
+    updateTimerDisplay();
+  }
+
+  // Dots
+  const dots = document.getElementById('blockDots');
+  dots.innerHTML = blocks.map((_,i) => `<div class="bdot ${i===curBlockIdx?'active':''}"></div>`).join('');
+}
+
+function renderCompleted(blocks) {
+  const comp = ld('oc_completed_'+todayKey()) || {};
+  const list = document.getElementById('completedList');
+  const done = blocks.filter(b => comp[b.id]);
+  if(!done.length) { list.innerHTML = '<div class="mono muted" style="font-size:10px;text-align:center;padding:6px 0">None yet</div>'; return; }
+  list.innerHTML = done.map(b => `
+    <div class="sched-item">
+      <span style="color:var(--green)">✓</span>
+      <span style="flex:1;font-size:13px;font-weight:600;color:${b.color}">${b.subject}</span>
+      <span class="mono muted" style="font-size:10px">${b.time}</span>
+    </div>`).join('');
+}
+
+function prevBlock() {
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  if(timerRunning) stopTimer();
+  curBlockIdx = (curBlockIdx - 1 + blocks.length) % blocks.length;
+  timerRemaining = 0;
+  renderBlocksScreen();
+}
+function nextBlock() {
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  if(timerRunning) stopTimer();
+  curBlockIdx = (curBlockIdx + 1) % blocks.length;
+  timerRemaining = 0;
+  renderBlocksScreen();
+}
+
+function changeBlockSubj(val) {
+  const blocks = ld('oc_blocks_custom') || JSON.parse(JSON.stringify(BLOCKS));
+  blocks[curBlockIdx].subject = val;
+  blocks[curBlockIdx].color = SUBJ_COLORS[val] || 'var(--gold)';
+  sv('oc_blocks_custom', blocks);
+  renderBlock(blocks[curBlockIdx], blocks);
+}
+
+function setEnergy(v) {
+  energyVal = v;
+  document.querySelectorAll('.e-star').forEach((s,i) => s.classList.toggle('active', i < v));
+}
+
+function toggleTimer() {
+  if(timerRunning) pauseTimer(); else startTimer();
+}
+function startTimer() {
+  if(timerRemaining <= 0) {
+    const blocks = ld('oc_blocks_custom') || BLOCKS;
+    timerTotal = blocks[curBlockIdx].mins * 60;
+    timerRemaining = timerTotal;
+  }
+  timerRunning = true;
+  document.getElementById('startPauseBtn').textContent = '⏸ PAUSE';
+  document.getElementById('warPauseBtn').textContent = '⏸ PAUSE';
+  timerInterval = setInterval(timerTick, 1000);
+}
+function pauseTimer() {
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('startPauseBtn').textContent = '▶ RESUME';
+  document.getElementById('warPauseBtn').textContent = '▶ RESUME';
+}
+function stopTimer() {
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('startPauseBtn').textContent = '▶ START';
+  document.getElementById('warPauseBtn').textContent = '▶ START';
+}
+function timerTick() {
+  if(timerRemaining <= 0) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    onBlockComplete();
+    return;
+  }
+  timerRemaining--;
+  updateTimerDisplay();
+}
+function updateTimerDisplay() {
+  const h = Math.floor(timerRemaining/3600);
+  const m = Math.floor((timerRemaining%3600)/60);
+  const s = timerRemaining%60;
+  const str = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  const pct = timerTotal > 0 ? Math.round((timerRemaining/timerTotal)*100) : 100;
+  document.getElementById('timerDisplay').textContent = str;
+  document.getElementById('warTimerDisplay').textContent = str;
+  document.getElementById('timerPct').textContent = pct+'%';
+  document.getElementById('warPct').textContent = pct+'%';
+
+  // Ring progress (502.65 = small, 702.65 = large)
+  const CIRC_S = 502.65, CIRC_L = 702.65;
+  const off_s = CIRC_S * (1 - timerRemaining/Math.max(timerTotal,1));
+  const off_l = CIRC_L * (1 - timerRemaining/Math.max(timerTotal,1));
+  document.getElementById('timerRing').style.strokeDashoffset = off_s;
+  document.getElementById('warRing').style.strokeDashoffset = off_l;
+
+  // Color shift as time runs low
+  if(timerRemaining < 300) {
+    document.getElementById('timerRing').style.stroke = 'var(--red)';
+    document.getElementById('warRing').style.stroke = 'var(--red)';
+  }
+}
+function onBlockComplete() {
+  if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+  showToast('⚡ BLOCK COMPLETE!');
+  document.getElementById('startPauseBtn').textContent = '▶ START';
+  document.getElementById('warPauseBtn').textContent = '▶ START';
+}
+function completeBlock() {
+  stopTimer();
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  const comp = ld('oc_completed_'+todayKey()) || {};
+  comp[blocks[curBlockIdx].id] = {completedAt: new Date().toISOString(), energy: energyVal};
+  sv('oc_completed_'+todayKey(), comp);
+  showToast('✅ BLOCK MARKED COMPLETE');
+  renderCompleted(blocks);
+  exitWarMode();
+  timerRemaining = 0;
+  updateTimerDisplay();
+}
+
+// Swipe on blocks
+document.getElementById('blocksScreen').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+document.getElementById('blocksScreen').addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if(Math.abs(diff) > 60) { if(diff > 0) nextBlock(); else prevBlock(); }
+}, {passive:true});
+
+// ═══ WAR MODE ═══
+function enterWarMode() {
+  document.getElementById('warMode').classList.add('open');
+  updateTimerDisplay();
+}
+function exitWarMode() {
+  document.getElementById('warMode').classList.remove('open');
+}
+
+// ═══ LOG ═══
+let logHours = '', logRating = 0;
+let mediaRecorder = null, audioChunks = [], isRecording = false;
+let pendingPhotoData = null;
+
+function initLog() {
+  document.getElementById('logDateDisplay').textContent = fmtDate(todayKey());
+  const existing = (ld('oc_logs') || []).find(l => l.date === todayKey());
+  if(existing) loadLogData(existing);
+}
+function loadLogData(e) {
+  logHours = e.hrs || '';
+  logRating = e.rating || 0;
+  if(logHours) { document.querySelectorAll('.h-opt').forEach(o => { o.classList.toggle('sel', o.dataset.val === logHours || o.textContent.replace(/\s/g,'') === logHours); }); }
+  if(logRating) { const r = document.querySelectorAll('.r-opt')[logRating-1]; if(r){r.classList.add('sel','r'+logRating);} }
+  if(e.points) e.points.forEach((p,i) => { const el=document.getElementById('pt'+(i+1)); if(el) el.value=p; });
+  if(e.mistakes) document.getElementById('log_mistakes').value = e.mistakes;
+  if(e.tomorrow) document.getElementById('log_tomorrow').value = e.tomorrow;
+  if(e.scores) {
+    ['taca','al','smt','mh','ca','tacb'].forEach(k => {
+      if(e.scores[k] !== undefined) { document.getElementById('sc_'+k).value = e.scores[k]; document.getElementById('sv_'+k).textContent = e.scores[k]; }
+    });
+  }
+}
+
+function selHours(el, val) {
+  logHours = val;
+  document.querySelectorAll('.h-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selRating(el, val) {
+  logRating = val;
+  document.querySelectorAll('.r-opt').forEach(o => { o.classList.remove('sel'); ['r1','r2','r3','r4','r5'].forEach(c=>o.classList.remove(c)); });
+  el.classList.add('sel','r'+val);
+}
+function updScore(slider, valId) {
+  document.getElementById(valId).textContent = slider.value;
+}
+
+async function toggleVoice() {
+  if(isRecording) {
+    mediaRecorder?.stop();
+    isRecording = false;
+    document.getElementById('voiceBtn').classList.remove('active');
+    document.getElementById('voiceStatus').classList.remove('on');
+  } else {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunks, {type:'audio/webm'});
+        const url = URL.createObjectURL(blob);
+        const audio = document.getElementById('audioPreview');
+        audio.src = url; audio.classList.add('show');
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      mediaRecorder.start();
+      isRecording = true;
+      document.getElementById('voiceBtn').classList.add('active');
+      document.getElementById('voiceStatus').classList.add('on');
+    } catch(e) { showToast('Microphone not available'); }
+  }
+}
+
+function saveLog() {
+  const points = [1,2,3,4,5].map(i => document.getElementById('pt'+i).value.trim()).filter(Boolean);
+  const scores = {};
+  ['taca','al','smt','mh','ca','tacb'].forEach(k => { scores[k] = parseInt(document.getElementById('sc_'+k).value); });
+  const entry = {
+    date: todayKey(), hrs: logHours, rating: logRating, points,
+    scores, mistakes: document.getElementById('log_mistakes').value.trim(),
+    tomorrow: document.getElementById('log_tomorrow').value.trim(),
+    savedAt: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})
+  };
+  let logs = ld('oc_logs') || [];
+  const idx = logs.findIndex(l => l.date === todayKey());
+  if(idx>=0) logs[idx]=entry; else logs.unshift(entry);
+  sv('oc_logs', logs);
+  showToast('✔ ENTRY SAVED');
+  updateHUD();
+}
+
+// ═══ ARCHIVE ═══
+function archTab(id, el) {
+  document.querySelectorAll('.arch-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('archLogs').style.display = id==='logs'?'block':'none';
+  document.getElementById('archPhotos').style.display = id==='photos'?'block':'none';
+  document.getElementById('archFiles').style.display = id==='files'?'block':'none';
+  if(id==='files') renderFilesList();
+}
+function renderArchive() {
+  renderLogsList();
+  renderPhotoGrid();
+}
+function renderLogsList() {
+  const logs = ld('oc_logs') || [];
+  const rColors = {'':['#6b7c6b','—'],1:['var(--red)','💀'],2:['var(--orange)','😐'],3:['var(--gold)','✅'],4:['var(--green)','🔥'],5:['var(--blue)','⚡']};
+  const list = document.getElementById('logsList');
+  if(!logs.length){list.innerHTML='<div class="od-empty"><div>📔</div><div>NO LOGS YET</div></div>';return;}
+  list.innerHTML = logs.map(l => {
+    const [rc, rl] = rColors[l.rating||''] || ['var(--muted)','—'];
+    return `<div class="log-entry-card fade-in">
+      <div class="lec-hd" onclick="toggleLec(this)">
+        <div class="lec-date">${fmtDate(l.date)}</div>
+        <div class="lec-meta">
+          ${l.hrs?`<span class="lec-badge" style="border-color:var(--smt);color:var(--smt)">${l.hrs}h</span>`:''}
+          ${l.rating?`<span class="lec-badge" style="border-color:${rc};color:${rc}">${rl}</span>`:''}
+        </div>
+      </div>
+      <div class="lec-body">
+        ${l.points&&l.points.length?`<div class="lec-field"><label>KEY POINTS</label><p>${l.points.map((p,i)=>`${i+1}. ${p}`).join('<br>')}</p></div>`:''}
+        ${l.mistakes?`<div class="lec-field"><label>DIFFICULT / REVISIT</label><p>${l.mistakes}</p></div>`:''}
+        ${l.tomorrow?`<div class="lec-field"><label>TOMORROW</label><p>${l.tomorrow}</p></div>`:''}
+        ${l.scores?`<div class="lec-field"><label>SCORES</label><p class="mono" style="font-size:11px">${Object.entries(l.scores).map(([k,v])=>`${k.toUpperCase()}:${v}/10`).join(' · ')}</p></div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleLec(hd) {
+  const body = hd.nextElementSibling;
+  body.classList.toggle('open');
+}
+function renderPhotoGrid() {
+  const photos = ld('oc_photos') || [];
+  const grid = document.getElementById('photoGrid');
+  const empty = document.getElementById('photoEmpty');
+  if(!photos.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML = photos.map((p,i) => `
+    <div class="photo-thumb" onclick="openViewer(${i})">
+      <img src="${p.dataUrl}" alt="">
+      <div class="photo-tag">${p.tag}</div>
+    </div>`).join('');
+}
+function renderFilesList() {
+  const files = ld('oc_od_files') || [];
+  const list = document.getElementById('filesList');
+  if(!files.length){list.innerHTML='<div class="od-empty"><div>☁</div><div>CONNECT ONEDRIVE TO VIEW FILES</div></div>';return;}
+  list.innerHTML = files.map(f => `
+    <div class="file-item" onclick="openFile('${f.webUrl||''}')">
+      <span class="file-icon">${f.name?.endsWith('.pdf')?'📄':f.name?.match(/\.(jpg|png|jpeg)/i)?'🖼️':'📁'}</span>
+      <div class="file-info">
+        <div class="file-name">${f.name}</div>
+        <div class="file-meta">${f.size?Math.round(f.size/1024)+'KB':'—'} · ${f.lastModified||'—'}</div>
+      </div>
+      <span class="file-tag">${getFileSubj(f.name)}</span>
+    </div>`).join('');
+}
+function getFileSubj(name='') {
+  const n = name.toLowerCase();
+  if(n.includes('tac a')||n.includes('taca')) return 'TAC A';
+  if(n.includes('tac b')||n.includes('tacb')) return 'TAC B';
+  if(n.includes('al')||n.includes('admin')||n.includes('log')) return 'A&L';
+  if(n.includes('smt')||n.includes('mil tech')) return 'SMT';
+  if(n.includes('mh')||n.includes('history')) return 'MH';
+  if(n.includes('ca')||n.includes('current')) return 'CA';
+  return 'MISC';
+}
+function openFile(url) { if(url) window.open(url,'_blank'); }
+
+// ═══ PHOTO UPLOAD ═══
+function openUpload() { closeFab(); document.getElementById('uploadModal').classList.add('open'); pendingPhotoData=null; document.getElementById('uploadPreview').classList.remove('show'); document.getElementById('savePhotoBtn').style.display='none'; }
+function closeUpload() { document.getElementById('uploadModal').classList.remove('open'); }
+function uploadModalClick(e) { if(e.target===document.getElementById('uploadModal')) closeUpload(); }
+function photoSelected(inp) {
+  const file = inp.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    pendingPhotoData = e.target.result;
+    const prev = document.getElementById('uploadPreview');
+    prev.src = pendingPhotoData; prev.classList.add('show');
+    document.getElementById('savePhotoBtn').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function savePhoto() {
+  if(!pendingPhotoData) return;
+  const tag = document.getElementById('uploadTag').value;
+  const photos = ld('oc_photos') || [];
+  photos.unshift({dataUrl:pendingPhotoData, tag, date:todayKey()});
+  if(photos.length > 50) photos.pop();
+  sv('oc_photos', photos);
+  closeUpload();
+  showToast('📸 PHOTO SAVED');
+  if(ld('oc_od_token')) odUploadPhoto(pendingPhotoData, tag);
+}
+
+// ═══ IMAGE VIEWER ═══
+function openViewer(idx) {
+  const photos = ld('oc_photos') || [];
+  const p = photos[idx]; if(!p) return;
+  document.getElementById('viewerImg').src = p.dataUrl;
+  document.getElementById('viewerTag').textContent = p.tag + ' · ' + fmtDate(p.date);
+  document.getElementById('imgViewer').classList.add('open');
+}
+function closeViewer() { document.getElementById('imgViewer').classList.remove('open'); }
+
+// ═══ FAB ═══
+function toggleFab() {
+  document.getElementById('fab').classList.toggle('open');
+  document.getElementById('fabMenu').classList.toggle('open');
+}
+function closeFab() {
+  document.getElementById('fab').classList.remove('open');
+  document.getElementById('fabMenu').classList.remove('open');
+}
+function fabGo(screen) {
+  closeFab();
+  nav(screen);
+}
+
+// ═══ MOTIVATION ═══
+function renderMotive() {
+  const qc = document.getElementById('quotesContainer');
+  qc.innerHTML = QUOTES.map(q => `
+    <div class="quote-card">
+      <div class="quote-text">${q.text}</div>
+      <div class="quote-author">— ${q.by}</div>
+    </div>`).join('');
+  renderSnap();
+}
+function renderSnap() {
+  const logs = ld('oc_logs') || [];
+  const snap = document.getElementById('snapScores');
+  if(!logs.length){snap.innerHTML='<div class="mono muted" style="font-size:10px;text-align:center;padding:6px 0">Save a log entry to see your scores</div>';return;}
+  const scores = logs[0].scores || {};
+  const colors = {taca:'var(--taca)',al:'var(--al)',smt:'var(--smt)',mh:'var(--mh)',ca:'var(--ca)',tacb:'var(--tacb)'};
+  const labels = {taca:'TAC A',al:'A&L',smt:'SMT',mh:'MH',ca:'CA',tacb:'TAC B'};
+  snap.innerHTML = Object.entries(scores).map(([k,v]) => `
+    <div class="score-row">
+      <span class="score-label" style="color:${colors[k]||'var(--gold)'};font-family:'Share Tech Mono',monospace;font-size:10px;width:50px">${labels[k]||k}</span>
+      <div style="flex:1;height:6px;background:var(--border2);position:relative;">
+        <div style="height:100%;width:${v*10}%;background:${colors[k]||'var(--gold)'};transition:width 0.5s;"></div>
+      </div>
+      <span class="score-val" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${colors[k]||'var(--gold)'};">${v}/10</span>
+    </div>`).join('');
+}
+
+// ═══ ONEDRIVE ═══
+const OD_SCOPE = 'Files.ReadWrite User.Read offline_access';
+const OD_FOLDER = 'DSSC_Deepak_Suhag';
+
+function openOD() { document.getElementById('odPanel').classList.add('open'); checkODToken(); }
+function closeOD() { document.getElementById('odPanel').classList.remove('open'); }
+function odPanelClick(e) { if(e.target===document.getElementById('odPanel')) closeOD(); }
+
+function checkODToken() {
+  const token = ld('oc_od_token');
+  if(token) {
+    document.getElementById('odStatus').textContent = '✓ CONNECTED TO ONEDRIVE';
+    document.getElementById('odStatus').className = 'od-status ok';
+    document.getElementById('odSyncBtn').style.display = 'block';
+    document.getElementById('odFilesBtn').style.display = 'block';
+    document.getElementById('odConfigArea').style.display = 'none';
+  }
+}
+
+function odLogin() {
+  const clientId = document.getElementById('odClientId').value.trim() || ld('oc_od_client') || '';
+  if(!clientId || clientId.length < 10) {
+    document.getElementById('odStatus').textContent = '⚠ Enter Client ID first';
+    document.getElementById('odStatus').className = 'od-status err';
+    return;
+  }
+  sv('oc_od_client', clientId);
+  const redirect = window.location.href.split('#')[0];
+  const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirect)}&scope=${encodeURIComponent(OD_SCOPE)}&response_mode=fragment&prompt=select_account`;
+  window.location.href = url;
+}
+
+function parseODToken() {
+  const hash = window.location.hash;
+  if(!hash.includes('access_token')) return;
+  const params = new URLSearchParams(hash.slice(1));
+  const token = params.get('access_token');
+  const expiresIn = parseInt(params.get('expires_in') || '3600');
+  if(token) {
+    sv('oc_od_token', token);
+    sv('oc_od_token_exp', Date.now() + expiresIn*1000);
+    window.history.replaceState({}, '', window.location.pathname);
+    showToast('✓ ONEDRIVE CONNECTED');
+    odCreateFolder(token);
+    updateHome();
+  }
+}
+
+async function odCreateFolder(token) {
+  try {
+    await fetch(`https://graph.microsoft.com/v1.0/me/drive/root/children`, {
+      method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: JSON.stringify({name:OD_FOLDER,folder:{},['@microsoft.graph.conflictBehavior']:'rename'})
+    });
+  } catch(e){}
+}
+
+async function odFetchFiles() {
+  const token = ld('oc_od_token'); if(!token){showToast('Not connected');return;}
+  document.getElementById('odStatus').textContent = '⟳ LOADING FILES...';
+  try {
+    const res = await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${OD_FOLDER}:/children`, {headers:{'Authorization':'Bearer '+token}});
+    if(!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    const files = (data.value||[]).map(f => ({name:f.name,size:f.size,webUrl:f.webUrl,lastModified:f.lastModifiedDateTime?.split('T')[0]}));
+    sv('oc_od_files', files);
+    document.getElementById('odStatus').textContent = `✓ ${files.length} FILES LOADED`;
+    showToast(`✓ ${files.length} FILES FROM ONEDRIVE`);
+    renderFilesList();
+    updateHome();
+  } catch(e) {
+    document.getElementById('odStatus').textContent = '⚠ Error loading files. Token may have expired.';
+    document.getElementById('odStatus').className = 'od-status err';
+  }
+}
+
+async function odSync() {
+  const token = ld('oc_od_token'); if(!token){showToast('Not connected');return;}
+  const logs = ld('oc_logs') || [];
+  const data = JSON.stringify({logs, exportDate: new Date().toISOString(), officer:'Maj Deepak Suhag'});
+  const fileName = `log_sync_${todayKey()}.json`;
+  try {
+    await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${OD_FOLDER}/${fileName}:/content`, {
+      method:'PUT', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: data
+    });
+    showToast('✓ SYNCED TO ONEDRIVE');
+  } catch(e) { showToast('Sync failed — check connection'); }
+}
+
+async function odUploadPhoto(dataUrl, tag) {
+  const token = ld('oc_od_token'); if(!token) return;
+  try {
+    const byteStr = atob(dataUrl.split(',')[1]);
+    const arr = new Uint8Array(byteStr.length);
+    for(let i=0;i<byteStr.length;i++) arr[i]=byteStr.charCodeAt(i);
+    const blob = new Blob([arr],{type:'image/jpeg'});
+    const fname = `answer_${tag.replace(/\s+/g,'_')}_${todayKey()}_${Date.now()}.jpg`;
+    await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${OD_FOLDER}/Answers/${fname}:/content`, {
+      method:'PUT', headers:{'Authorization':'Bearer '+token,'Content-Type':'image/jpeg'}, body:blob
+    });
+    showToast('↑ UPLOADED TO ONEDRIVE');
+  } catch(e){}
+}
+
+// ═══ SCHEDULE DISPLAY ═══
+function renderSchedule() {
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  const comp = ld('oc_completed_'+todayKey()) || {};
+  return blocks.map(b => `
+    <div class="sched-item">
+      <div class="sched-dot" style="background:${b.color||'var(--gold)'}"></div>
+      <div class="sched-time">${b.time}</div>
+      <div class="sched-subj" style="color:${b.color||'var(--text)'}">${b.subject}</div>
+      <div class="sched-done">${comp[b.id]?'✅':'○'}</div>
+    </div>`).join('');
+}
+
+// ═══ TOAST ═══
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ═══ ROTATING QUOTE ═══
+let qi = 0;
+function rotateQuote() {
+  qi = (qi+1) % QUOTES.length;
+  const el = document.getElementById('rotatingQuote');
+  if(el) { el.style.opacity='0'; setTimeout(()=>{ el.textContent=QUOTES[qi].text; el.style.opacity='1'; },300); }
+  const el2 = document.getElementById('motiveQuote');
+  if(el2) { el2.textContent=QUOTES[qi].text; }
+}
+setInterval(rotateQuote, 8000);
+
+// ═══ INIT ═══
+window.addEventListener('load', () => {
+  setupPWA();
+  parseODToken();
+  updateHUD();
+  updateHome();
+  setInterval(updateHUD, 30000);
+  // Init block dots & ring
+  const blocks = ld('oc_blocks_custom') || BLOCKS;
+  const dots = document.getElementById('blockDots');
+  dots.innerHTML = blocks.map((_,i)=>`<div class="bdot ${i===0?'active':''}"></div>`).join('');
+  timerTotal = blocks[0].mins*60; timerRemaining=timerTotal;
+  updateTimerDisplay();
+  // Daily checklist restore
+  document.querySelectorAll('.r-opt').forEach(o=>{ ['r1','r2','r3','r4','r5'].forEach(c=>o.classList.remove(c)); });
+  // Close overlays on escape
+  document.addEventListener('keydown', e => { if(e.key==='Escape'){exitWarMode();closeOD();closeUpload();closeViewer();closeFab();} });
+  // Dismiss FAB on outside tap
+  document.getElementById('main').addEventListener('touchstart', closeFab, {passive:true});
+});
+</script>
+</body>
+</html>
